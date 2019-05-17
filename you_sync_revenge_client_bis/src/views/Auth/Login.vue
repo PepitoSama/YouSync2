@@ -58,9 +58,8 @@ export default {
             window.$cookies.set('token',res.data.token)
             this.$store.dispatch('setToken', res.data.token)
             this.$store.dispatch('setUser', res.data.username)
+            this.connected = true
           })
-          // TODO ajouter store
-          this.connected = true
           this.$router.push({
             name: 'playlist'
           })

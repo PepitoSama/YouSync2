@@ -5,7 +5,7 @@
     height="50"
     tile
   >
-    <v-toolbar dense color="red accent-4" dark fixed>
+    <v-toolbar dense color="red darken-4" dark fixed>
 
       <v-toolbar-title @click="goTo('playlist')">YouSync</v-toolbar-title>
 
@@ -40,7 +40,6 @@ import AuthentificationService from '@/services/AuthenticationService'
 export default {
   computed : {
     isLogged : function(){
-      console.log('\n =>', this.$store.getters.isLogged)
       return this.$store.getters.isLogged
     }
   },
@@ -54,9 +53,7 @@ export default {
         })
         // TODO ajouter store
         this.connected = true
-        this.$router.push({
-          name: 'playlist'
-        })
+        this.goTo('/')
       } catch (error) {
         this.error = error.response.data.error
       }

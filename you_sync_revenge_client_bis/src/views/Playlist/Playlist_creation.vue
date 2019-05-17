@@ -9,7 +9,7 @@
             </v-toolbar>
             <v-card-text>
               <v-form>
-                <v-text-field prepend-icon="library_add" name="name" label="name" v-model="name" id="name" type="text"></v-text-field>
+                <v-text-field prepend-icon="library_add" name="name" :label="label" v-model="name" id="name" type="text"></v-text-field>
               </v-form>
             </v-card-text>
             <v-card-actions>
@@ -17,7 +17,7 @@
               <v-btn
                 dark
                 color="deep-orange"
-                v-on:click="login()"
+                @click="createPlaylist()"
               >
                 Create
               </v-btn>
@@ -28,3 +28,33 @@
     </v-container>
   </v-content>
 </template>
+
+<script>
+import PlaylistService from '@/services/PlaylistService'
+export default {
+  data: () => ({
+    name: '',
+    label: 'Playlist name'
+  }),
+  methods: {
+    async createPlaylist () {
+      if(this.name !== '') {
+        try {
+          await PlaylistService.create(this.name)
+          .then(res => {
+            this.goTo('playlist')
+          })
+        } catch (err) {
+          this.label = 'Please enter a playlist name ...'
+        }
+      }
+    },
+    goTo (whereToGo) {
+      this.$router.push({
+        name: whereToGo
+      })
+    }
+  }
+}
+
+</script>

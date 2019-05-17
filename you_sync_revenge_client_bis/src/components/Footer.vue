@@ -1,7 +1,7 @@
 <template>
   <v-footer
     height="auto"
-    color="red accent-4"
+    color="red darken-4"
     absolute
   >
     <v-layout

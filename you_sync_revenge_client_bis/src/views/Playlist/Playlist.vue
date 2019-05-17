@@ -19,7 +19,7 @@
               v-for="item in items"
               :key="item.id"
               avatar
-              @click=""
+              @click="goTo('/playlist/' + item.id )"
             >
               <v-list-tile-avatar>
                 <v-icon color="red darken-4"> video_library </v-icon>
@@ -118,7 +118,7 @@ export default {
       })
     },
     getDeleteUri (itemId) {
-
+      console.log('DELETE' + itemId)
     }
   },
   mounted: async function () {

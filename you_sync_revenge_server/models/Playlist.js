@@ -23,5 +23,18 @@ module.exports = (sequelize, DataTypes) => {
     Playlist.hasMany(models.Video)
   }
 
+  Playlist.belongToUser = async function (playlistId, userId) {
+    const result = await Playlist.findAll({
+      where: {
+        playlistId: playlistId,
+        UserUserId: userId
+      }
+    })
+    console.log('\n', result.length)
+    if (result.length === 0) {
+      throw Error
+    }
+  }
+
   return Playlist
 }

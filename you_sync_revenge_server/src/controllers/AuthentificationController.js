@@ -12,6 +12,9 @@ module.exports = {
   /*
   |=============================================================================
   | Route : /register
+  | TODO : Check if userName is already taken in order to return  appopriate
+  |        error message
+  | TODO : Set provided username lowercase
   |=============================================================================
   */
   async register (req, res) {
@@ -38,14 +41,15 @@ module.exports = {
       // 400 Bad Request : The server cannot or will not process the request due
       // to an apparent client error
       res.status(400).send({
-        error: 'This email account is already in use.'
+        error: 'This email or username is already in use.'
       })
     }
   },
   /*
   |=============================================================================
   | Route : /login
-  | TODO : check ig user is already logged
+  | TODO : check if user is already logged
+  | TODO : Set provided username lowercase (TODO Register before)
   |=============================================================================
   */
   async login (req, res) {
@@ -84,39 +88,32 @@ module.exports = {
   */
   async logout (req, res) {
     // logout request should be sent with token
-    const { user, cookies: { auth_token: authToken } } = req
+    const { cookies: { auth_token: authToken } } = req
 
     // we only want to attempt a logout if the user already
     // passed the authentication middleware.
-    console.log('\n', req)
-    if (user && authToken) {
-      await req.user.logout(authToken)
-      // 204 No Content : The server successfully processed the request
-      // and is not returning any content.[14]
-      return res.status(204).send()
+    try {
+      // console.log('\n =>>', req.user[0].dataValues)
+      if (req.user !== 'undefined') {
+        const result = await User.prototype.logout(authToken)
+        // 204 No Content : The server successfully processed the request
+        // and is not returning any content.[14]
+        if (result === 0) {
+          throw Error
+        }
+        return res.status(200).send({
+          message: 'logout completed !'
+        })
+      } else {
+        throw Error
+      }
+    } catch (err) {
+      // 403 Forbidden : The request was valid, but the server is refusing action.
+      // The user might not have the necessary permissions for a resource, or may
+      // need an account of some sort.
+      return res.status(403).send(
+        { errors: [{ message: 'not authenticated' }] }
+      )
     }
-
-    // 403 Forbidden : The request was valid, but the server is refusing action.
-    // The user might not have the necessary permissions for a resource, or may
-    // need an account of some sort.
-    return res.status(403).send(
-      { errors: [{ message: 'not authenticated' }] }
-    )
-  },
-  /*
-  |=============================================================================
-  | Route : /userInfo
-  |=============================================================================
-  */
-  async userInfo (req, res) {
-    if (req.user) {
-      return res.send(req.user)
-    }
-    // 404 Not Found : The requested resource could not be found but may be
-    // available in the future. Subsequent requests by the client are
-    // permissible.
-    res.status(404).send(
-      { errors: [{ message: 'missing auth token' }] }
-    )
   }
 }

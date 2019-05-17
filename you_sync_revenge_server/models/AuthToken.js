@@ -24,5 +24,16 @@ module.exports = (sequelize, DataTypes) => {
     return AuthToken.create({ token, UserId })
   }
 
+  // Associates Token it with a user
+  AuthToken.getUser = async function (token) {
+    const result = AuthToken.find({
+      where: token
+    })
+    console.log(result)
+    if (result.length === 0) {
+      throw new Error('No user found for this token')
+    }
+    return result
+  }
   return AuthToken
 }

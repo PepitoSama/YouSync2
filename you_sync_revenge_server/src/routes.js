@@ -1,7 +1,8 @@
 const AuthentificationController = require('./controllers/AuthentificationController')
 const AuthentificationControllerPolicy = require('./policies/AuthentificationControllerPolicy')
-const PlaylistController = require('./controllers/PlaylistController')
-const UserController = require('./controllers/UserController')
+const PlaylistController = require('./controllers/modelController/PlaylistController')
+const UserController = require('./controllers/modelController/UserController')
+const VideoController = require('./controllers/modelController/VideoController')
 
 /*
 |===============================================================================
@@ -33,24 +34,24 @@ module.exports = (app) => {
   /*
   |===============================================================================
   | Playlist routes :
-  | TODO > GET /playlist
-  | TODO > PUT /playlist
-  | TODO > DELETE /playlist
+  | > GET /playlist
+  | > PUT /playlist
+  | > DELETE /playlist
   | > POST /playlist
   |===============================================================================
   */
   app.get('/playlist', PlaylistController.read)
-  app.put('/playlist/:id', PlaylistController.update)
-  app.delete('/playlist/:id', PlaylistController.delete)
+  app.put('/playlist', PlaylistController.update)
+  app.delete('/playlist', PlaylistController.delete)
   app.post('/playlist', PlaylistController.create)
 
   /*
   |===============================================================================
   | User routes :
-  | TODO > GET /user
-  | TODO > PUT /user
-  | TODO > DELETE /user
-  | TODO > POST /user
+  | > GET /user
+  | > PUT /user
+  | > DELETE /user
+  | > POST /user
   |===============================================================================
   */
   app.get('/user', UserController.read)
@@ -60,10 +61,14 @@ module.exports = (app) => {
   /*
   |===============================================================================
   | Video routes :
-  | TODO > GET /video
-  | TODO > PUT /video
-  | TODO > DELETE /video
-  | TODO > POST /video
+  | > GET /video
+  | > PUT /video
+  | > DELETE /video
+  | > POST /video
   |===============================================================================
   */
+  app.get('/video', VideoController.read)
+  app.put('/video', VideoController.update)
+  app.delete('/video', VideoController.delete)
+  app.post('/video', VideoController.create)
 }

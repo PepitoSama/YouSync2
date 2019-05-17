@@ -32,7 +32,8 @@ module.exports = (sequelize, DataTypes) => {
     userUsername: {
       type: DataTypes.STRING,
       required: true,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     userEmail: {
       type: DataTypes.STRING,
@@ -95,7 +96,7 @@ module.exports = (sequelize, DataTypes) => {
 
   User.prototype.logout = async function (token) {
     // User is not anymore in AuthToken table
-    sequelize.models.AuthToken.destroy({ where: { token } })
+    return sequelize.models.AuthToken.destroy({ where: { token } })
   }
 
   return User

@@ -14,7 +14,7 @@
         <v-icon dark @click="goTo('download')">cloud_download</v-icon>
       </v-btn>
 
-      <div v-if="this.$store.isLogged">
+      <div v-show="isLogged">
         <v-btn icon>
           <v-icon dark @click="goTo('playlist')">playlist_play</v-icon>
         </v-btn>
@@ -26,7 +26,7 @@
         </v-btn>
       </div>
 
-      <div v-else>
+      <div v-show="!isLogged">
         <v-btn icon>
           <v-icon dark @click="goTo('login')">account_circle</v-icon>
         </v-btn>
@@ -36,28 +36,35 @@
 </template>
 
 <script>
+import AuthentificationService from '@/services/AuthenticationService'
 export default {
-  data: () => ({
-    connected: false
-  }),
+  computed : {
+    isLogged : function(){
+      console.log('\n =>', this.$store.getters.isLogged)
+      return this.$store.getters.isLogged
+    }
+  },
   methods: {
-    logout: function () {
-      // TODO
+    async logout () {
+      try {
+        await AuthentificationService.logout().then( res => {
+          window.$cookies.set('token',res.data.token)
+          this.$store.dispatch('setToken', res.data.token)
+          this.$store.dispatch('setUser', res.data.username)
+        })
+        // TODO ajouter store
+        this.connected = true
+        this.$router.push({
+          name: 'playlist'
+        })
+      } catch (error) {
+        this.error = error.response.data.error
+      }
     },
     goTo: function (whereToGo) {
       this.$router.push({
         name: whereToGo
       })
-    }
-  },
-  created: function () {
-    console.log(this.$store)
-    if (window.$cookies.get('token') === null) {
-      console.log("Not connected :")
-      this.connected = false
-    } else {
-      console.log("Connected !")
-      this.connected = true
     }
   }
 }

@@ -10,11 +10,17 @@
             <v-text-field prepend-icon="link" name="downlink" label="Add one existing !" v-model="downlink" id="downlink" type="text" disabled></v-text-field>
           </v-form>
         </v-card-text>
-        <v-list>
+        <v-list :key="nbPlaylistMsg">
+          <!-- ERROR BECAUSE OF MSG-->
+          <!-- <v-subheader >{{ nbPlaylistMsg }}</v-subheader> -->
+          <v-subheader>
+            {{ nbPlaylistMsg }}
+          </v-subheader>
           <v-list-tile
             v-for="item in items"
             :key="item.title"
             avatar
+            v-show="nbPlaylist > 0"
           >
             <v-list-tile-content>
               <v-list-tile-title v-text="item.title"></v-list-tile-title>
@@ -68,7 +74,6 @@
         <v-card-text class = "mt-5" style="height: 100px; position: relative">
           <v-fab-transition>
             <v-btn
-              v-show="!hidden"
               color="pink"
               dark
               absolute
@@ -87,15 +92,15 @@
 </template>
 
 <script>
+import PlaylistService from '@/services/PlaylistService'
+
 export default {
   data () {
     return {
-      items: [
-        { title: 'Playlist 1', id: 1 },
-        { title: 'Playlist 2', id: 2 },
-        { title: 'Playlist 3', id: 3 },
-        { title: 'Playlist 4', id: 4 }
-      ]
+      nbPlaylist: 0,
+      nbPlaylistMsg: '',
+      items: [],
+      downlink: null
     }
   },
   methods: {
@@ -104,6 +109,26 @@ export default {
       this.$router.push({
         name: 'playlistcreate'
       })
+    }
+  },
+  mounted: async function () {
+    try {
+      await PlaylistService.getUserPlaylist()
+      .then(res => {
+        this.nbPlaylist = res.data.result.length
+        this.nbPlaylistMsg = 'You have ' + this.nbPlaylist + ' playlist'
+        console.log('\n', nbPlaylistMsg)
+        for (var i = 0; i < res.data.result.length; i++){
+          const item = {
+            title: res.data.result[i].playlistName,
+            id: i,
+          }
+          this.items.push(item)
+        }
+      })
+    } catch (error) {
+      this.nbPlaylistMsg = 'You dont have any playlist yet, create one !'
+      this.nbPlaylist = 0
     }
   }
 }

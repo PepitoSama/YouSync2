@@ -88,14 +88,13 @@ module.exports = {
   */
   async logout (req, res) {
     // logout request should be sent with token
-    const { cookies: { auth_token: authToken } } = req
+    const { user } = req
 
     // we only want to attempt a logout if the user already
     // passed the authentication middleware.
     try {
-      // console.log('\n =>>', req.user[0].dataValues)
-      if (req.user !== 'undefined') {
-        const result = await User.prototype.logout(authToken)
+      if (req.user !== 'undefined' || req.user !== null) {
+        const result = await User.prototype.logout(user.userToken)
         // 204 No Content : The server successfully processed the request
         // and is not returning any content.[14]
         if (result === 0) {
@@ -108,9 +107,10 @@ module.exports = {
         throw Error
       }
     } catch (err) {
-      // 403 Forbidden : The request was valid, but the server is refusing action.
-      // The user might not have the necessary permissions for a resource, or may
-      // need an account of some sort.
+      console.log('\n ERROR : ', err)
+      // 403 Forbidden : The request was valid, but the server is refusing
+      // action. The user might not have the necessary permissions for a
+      // resource, or may need an account of some sort.
       return res.status(403).send(
         { errors: [{ message: 'not authenticated' }] }
       )

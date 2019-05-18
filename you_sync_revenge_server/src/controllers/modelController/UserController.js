@@ -11,18 +11,18 @@ module.exports = {
   async read (req, res) {
     try {
       if (typeof req.user === 'undefined' || req.user === null) {
-        throw Error
+        throw new Error('You are not connected')
       }
       const readStruct = {
         where: {
-          userId: req.user[0].dataValues.UserUserId
+          userId: req.user.userId
         }
       }
       return CRUDController.read(req, res, User, readStruct)
     } catch (err) {
-      // 404 Not Found
+      // 401 Unauthorized
       return res.status(404).send({
-        error: 'You Are not connected'
+        error: err.message
       })
     }
   },
@@ -37,21 +37,21 @@ module.exports = {
   async update (req, res) {
     try {
       if (typeof req.user === 'undefined' || req.user === null) {
-        throw Error
+        throw new Error('You are not connected')
       }
       const updateStruct = {
         update: {
           userUsername: req.body.username
         },
         where: {
-          userId: req.user[0].dataValues.UserUserId
+          userId: req.user.userId
         }
       }
       return CRUDController.update(req, res, User, updateStruct)
     } catch (err) {
-      // 404 Not Found
-      return res.status(404).send({
-        error: 'You dont have permission to do this'
+      // 401 Unauthorized
+      return res.status(401).send({
+        error: err.message
       })
     }
   },
@@ -65,35 +65,18 @@ module.exports = {
   async delete (req, res) {
     try {
       if (typeof req.user === 'undefined' || req.user === null) {
-        throw Error
+        throw new Error('You are not connected')
       }
       const deleteStruct = {
-        userId: req.user[0].dataValues.UserUserId
+        userId: req.user.userId
       }
+      req.user = null
       return CRUDController.delete(req, res, User, deleteStruct)
     } catch (err) {
-      // 404 Not Found
-      return res.status(404).send({
-        error: 'You dont have permission to do this'
+      // 401 Unauthorized
+      return res.status(401).send({
+        error: err.message
       })
     }
-  },
-  /*
-  |=============================================================================
-  | User getUser
-  | Allow to user to get his informations
-  | NOTE : /!\ This method is deprecated and will be removed soon /!\
-  |=============================================================================
-  */
-  async getUser (req, res) {
-    if (req.user) {
-      return res.send(req.user)
-    }
-    // 404 Not Found : The requested resource could not be found but may be
-    // available in the future. Subsequent requests by the client are
-    // permissible.
-    res.status(404).send(
-      { errors: [{ message: 'missing auth token' }] }
-    )
   }
 }

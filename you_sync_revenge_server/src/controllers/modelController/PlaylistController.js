@@ -1,5 +1,6 @@
 const { Playlist } = require('../../../models')
 const CRUDController = require('./CRUDController')
+const VideoController = require('./VideoController')
 
 module.exports = {
   /*
@@ -12,41 +13,61 @@ module.exports = {
   async create (req, res) {
     try {
       if (typeof req.user === 'undefined' || req.user === null) {
-        throw Error
+        throw new Error('You are not connected')
       }
       const createStruct = {
         playlistName: req.body.playlistName,
-        UserUserId: req.user[0].dataValues.UserUserId
+        UserUserId: req.user.userId
       }
       return CRUDController.create(req, res, Playlist, createStruct)
     } catch (err) {
-      // 404 Not Found
-      return res.status(404).send({
-        error: 'You Are not connected'
+      // 401 Unauthorized
+      return res.status(401).send({
+        error: err.message
       })
     }
   },
   /*
   |=============================================================================
-  | Playlist Read
+  | Playlist ReadAll
   | Read all playlist associated to initiator user
   |=============================================================================
   */
-  async read (req, res) {
+  async readAll (req, res) {
     try {
       if (typeof req.user === 'undefined' || req.user === null) {
-        throw Error
+        throw new Error('You are not connected')
       }
       const readStruct = {
         where: {
-          UserUserId: req.user[0].dataValues.UserUserId
+          UserUserId: req.user.userId
         }
       }
       return CRUDController.read(req, res, Playlist, readStruct)
     } catch (err) {
-      // 404 Not Found
-      return res.status(404).send({
-        error: 'You Are not connected'
+      // 401 Unauthorized
+      return res.status(401).send({
+        error: err.message
+      })
+    }
+  },
+  /*
+  |=============================================================================
+  | Playlist ReadOne
+  | Read one playlist associated to initiator user using playlist id
+  |=============================================================================
+  */
+  async readOne (req, res) {
+    try {
+      if (typeof req.user === 'undefined' || req.user === null) {
+        throw new Error('You are not connected')
+      }
+      await Playlist.belongToUser(req.params.playlistId, req.user.userId)
+      return VideoController.readPlaylistId(req, res, req.params.playlistId)
+    } catch (err) {
+      // 401 Unauthorized
+      return res.status(401).send({
+        error: err.message
       })
     }
   },
@@ -61,9 +82,9 @@ module.exports = {
   async update (req, res) {
     try {
       if (typeof req.user === 'undefined' || req.user === null) {
-        throw Error
+        throw new Error('You are not connected')
       }
-      await Playlist.belongToUser(req.body.playlistId, req.user[0].dataValues.UserUserId)
+      await Playlist.belongToUser(req.body.playlistId, req.user.userId)
       const updateStruct = {
         update: {
           playlistName: req.body.playlistName
@@ -74,9 +95,9 @@ module.exports = {
       }
       return CRUDController.update(req, res, Playlist, updateStruct)
     } catch (err) {
-      // 404 Not Found
-      return res.status(404).send({
-        error: 'You Are not connected or this not your playlist'
+      // 401 Unauthorized
+      return res.status(401).send({
+        error: err.message
       })
     }
   },
@@ -86,22 +107,23 @@ module.exports = {
   | Delete a playlist name
   | Block if not associated to requester user
   | Body need : playlistId
+  | TODO : Drop all Video associated
   |=============================================================================
   */
   async delete (req, res) {
     try {
       if (typeof req.user === 'undefined' || req.user === null) {
-        throw Error
+        throw new Error('You are not connected')
       }
-      await Playlist.belongToUser(req.body.playlistId, req.user[0].dataValues.UserUserId)
+      await Playlist.belongToUser(req.params.playlistId, req.user.userId)
       const deleteStruct = {
-        playlistId: req.body.playlistId
+        playlistId: req.params.playlistId
       }
       return CRUDController.delete(req, res, Playlist, deleteStruct)
     } catch (err) {
-      // 404 Not Found
-      return res.status(404).send({
-        error: 'You Are not connected or this not your playlist'
+      // 401 Unauthorized
+      return res.status(401).send({
+        error: err.message
       })
     }
   }

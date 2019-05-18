@@ -27,7 +27,7 @@ app.use(cors())
 require('./routes')(app)
 
 // force tables to re-create themselves
-// sequelize.sync({ force: true })
+// sequelize.sync({ force: true })
 // Just check if tables are created
 sequelize.sync()
   .then(() => {

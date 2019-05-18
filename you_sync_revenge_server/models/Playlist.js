@@ -30,9 +30,8 @@ module.exports = (sequelize, DataTypes) => {
         UserUserId: userId
       }
     })
-    console.log('\n', result.length)
     if (result.length === 0) {
-      throw Error
+      throw new Error('This playlist does not belong to connected user')
     }
   }
 

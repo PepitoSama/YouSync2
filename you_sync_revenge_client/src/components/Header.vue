@@ -53,7 +53,7 @@ export default {
         })
         // TODO ajouter store
         this.connected = true
-        this.goTo('/')
+        this.goTo('login')
       } catch (error) {
         this.error = error.response.data.error
       }

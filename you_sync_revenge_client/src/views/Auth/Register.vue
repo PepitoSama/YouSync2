@@ -54,21 +54,20 @@ export default {
   methods: {
     async register () {
       console.log(this)
-      // try {
-      //   const response = await AuthentificationService.register({
-      //     username: this.username,
-      //     email: this.email,
-      //     password: this.password
-      //   })
-      //   this.$store.dispatch('setToken', response.data.token)
-      //   this.$store.dispatch('setUser', response.data.user)
-      //   this.$router.push({
-      //     name: 'login',
-      //     params: { registered: response.data.user }
-      //   })
-      // } catch (error) {
-      //   this.error = error.response.data.error
-      // }
+      try {
+        const response = await AuthentificationService.register({
+          username: this.username,
+          email: this.email,
+          password: this.password
+        })
+        this.$store.dispatch('setToken', response.data.token)
+        this.$store.dispatch('setUser', response.data.user)
+        this.$router.push({
+          name: 'login'
+        })
+      } catch (error) {
+        this.error = error.response.data.error
+      }
     },
     goTo: function (whereToGo) {
       this.$router.push({

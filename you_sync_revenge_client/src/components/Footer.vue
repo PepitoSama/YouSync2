@@ -15,8 +15,9 @@
         color="white"
         flat
         round
+        @click=goTo(link.path)
       >
-        {{ link }}
+        {{ link.title }}
       </v-btn>
       <v-flex
         primary
@@ -34,10 +35,18 @@
 export default {
   data: () => ({
     links: [
-      'Home',
-      'Team',
-      'Contact Us'
+      {
+        title: "credit",
+        path: "credit"
+      }
     ]
-  })
+  }),
+  methods: {
+    goTo: function (whereToGo) {
+      this.$router.push({
+        name: whereToGo
+      })
+    }
+  }
 }
 </script>

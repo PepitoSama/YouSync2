@@ -45,7 +45,9 @@ export default {
     valid: true,
     username: '',
     password: '',
-    error: null
+    error: null,
+    registerMsg: '',
+    alert: false
   }),
   methods: {
     async login () {

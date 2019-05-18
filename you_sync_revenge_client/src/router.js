@@ -9,6 +9,7 @@ import Playlist from './views/Playlist/Playlist.vue'
 import PlaylistList from './views/Playlist/Playlist_List.vue'
 import PlaylistCreation from './views/Playlist/Playlist_creation.vue'
 import User from './views/User/User.vue'
+import Credit from './views/Infos/Credit.vue'
 
 Vue.use(Router)
 
@@ -36,13 +37,13 @@ export default new Router({
       component: Download
     },
     {
-      path: '/playlist',
-      name: 'playlist',
-      component: Playlist
+      path: '/playlist/:idPlaylist',
+      name: 'playlistview',
+      component: PlaylistList
     },
     {
-      path: '/playlist/:id',
-      name: 'playlistview',
+      path: '/playlist',
+      name: 'playlist',
       component: Playlist
     },
     {
@@ -54,6 +55,11 @@ export default new Router({
       path: '/user',
       name: 'user',
       component: User
+    },
+    {
+      path: '/credit',
+      name: 'credit',
+      component: Credit
     }
   ]
 })

@@ -19,9 +19,9 @@ module.exports = {
         message: 'Created !'
       })
     } catch (err) {
-      // 500 Internal Server Error
-      return res.status(500).send({
-        error: 'Can\'t create it'
+      // 409 Conflict
+      return res.status(409).send({
+        error: 'Already taken'
       })
     }
   },
@@ -34,16 +34,22 @@ module.exports = {
     try {
       const result = await Model.findAll(readStruct)
       if (result.length === 0) {
-        throw Error
+        throw new Error('0')
       }
       // 200 OK
       return res.status(200).send({
         result: result
       })
     } catch (err) {
+      if (err.message === '0') {
+        // 204 No Content
+        return res.status(204).send({
+          error: 'Already taken'
+        })
+      }
       // 404 Not Found
       return res.status(404).send({
-        error: 'Ressource was not found'
+        error: 'Already taken'
       })
     }
   },
@@ -62,15 +68,14 @@ module.exports = {
       if (result[0] === 0) {
         throw new Error('Ressource was not found')
       }
-
       // 200 OK
       return res.status(200).send({
         message: 'Ressource successfully updated'
       })
     } catch (err) {
-      // 404 Not Found
-      res.status(404).send({
-        error: 'Ressource was not found'
+      // 409 Conflict
+      return res.status(409).send({
+        error: 'Already taken'
       })
     }
   },
@@ -92,9 +97,9 @@ module.exports = {
         message: 'Ressource successfully deleted'
       })
     } catch (err) {
-      // 404 Not Found
-      res.status(404).send({
-        error: 'Ressource was not found'
+      // 400 Bad Request
+      return res.status(400).send({
+        error: 'Failed to delete'
       })
     }
   }

@@ -1,144 +1,148 @@
-<template>
-  <v-container
-    fill-height
-    fluid
-    grid-list-xl>
-    <v-layout
-      justify-center
-      wrap
-    >
-      <v-flex
-        xs12
-        md8
+  <template>
+    <v-container
+      fill-height
+      fluid
+      grid-list-xl>
+      <v-layout
+        justify-center
+        wrap
       >
-        <material-card
-          color="green"
-          title="Edit Profile"
-          text="Complete your profile"
+        <v-flex
+          xs12
+          md8
         >
-          <v-form>
-            <v-container py-0>
-              <v-layout wrap>
-                <v-flex
-                  xs12
-                  md4
-                >
-                  <v-text-field
-                    label="Company (disabled)"
-                    disabled/>
-                  </v-flex>
-                  <v-flex
-                    xs12
-                    md4
-                  >
-                  <v-text-field
-                    class="purple-input"
-                    label="User Name"
-                  />
-                </v-flex>
-                <v-flex
-                  xs12
-                  md4
-                >
-                  <v-text-field
-                    label="Email Address"
-                    class="purple-input"/>
-                </v-flex>
-                <v-flex
-                  xs12
-                  md6
-                >
-                  <v-text-field
-                    label="First Name"
-                    class="purple-input"/>
-                </v-flex>
-                <v-flex
-                  xs12
-                  md6
-                >
-                  <v-text-field
-                    label="Last Name"
-                    class="purple-input"/>
-                </v-flex>
-                <v-flex
-                  xs12
-                  md12
-                >
-                  <v-text-field
-                    label="Adress"
-                    class="purple-input"/>
-                </v-flex>
-                <v-flex
-                  xs12
-                  md4>
-                  <v-text-field
-                    label="City"
-                    class="purple-input"/>
-                </v-flex>
-                <v-flex
-                  xs12
-                  md4>
-                  <v-text-field
-                    label="Country"
-                    class="purple-input"/>
-                </v-flex>
-                <v-flex
-                  xs12
-                  md4>
-                  <v-text-field
-                    class="purple-input"
-                    label="Postal Code"
-                    type="number"/>
-                </v-flex>
-                <v-flex xs12>
-                  <v-textarea
-                    class="purple-input"
-                    label="About Me"
-                    value="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-                  />
-                </v-flex>
-                <v-flex
-                  xs12
-                  text-xs-right
-                >
-                  <v-btn
-                    class="mx-0 font-weight-light"
-                    color="success"
-                  >
-                    Update Profile
-                  </v-btn>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-form>
-        </material-card>
-      </v-flex>
-      <v-flex
-        xs12
-        md4
-      >
-        <material-card class="v-card-profile">
-          <v-avatar
-            slot="offset"
-            class="mx-auto d-block"
-            size="130"
+          <v-card
+            color="grey lighten-4"
+            flat
+            height="200px"
+            tile
           >
-            <img
-              src="https://partycity6.scene7.com/is/image/PartyCity/_pdp_sq_?$_1000x1000_$&$product=PartyCity/278696_02"
+            <v-toolbar dense>
+              <v-icon>person</v-icon>
+              <v-toolbar-title>Your Infos</v-toolbar-title>
+            </v-toolbar>
+            <v-form
+              ref="form"
+              v-model="valid"
+              lazy-validation
             >
-          </v-avatar>
-          <v-card-text class="text-xs-center">
-            <h6 class="category text-gray font-weight-thin mb-3">CEO / CO-FOUNDER</h6>
-            <h4 class="card-title font-weight-light">Alec Thompson</h4>
-            <p class="card-description font-weight-light">Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...</p>
-            <v-btn
-              color="success"
-              round
-              class="font-weight-light"
-            >Follow</v-btn>
-          </v-card-text>
-        </material-card>
-      </v-flex>
-    </v-layout>
-  </v-container>
-</template>
+              <v-text-field
+                v-model="username"
+                :counter="32"
+                :rules="nameRules"
+                label="Name"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model="email"
+                :rules="emailRules"
+                label="E-mail"
+                required
+              ></v-text-field>
+              <div class="text-xs-center">
+                <v-btn
+                  round
+                  color="success"
+                  dark
+                  :disabled="!valid"
+                  @click="updateUser"
+                >
+                  <v-icon>edit</v-icon>
+                  Edit
+                </v-btn>
+              </div>
+            </v-form>
+            <v-layout
+              justify-center
+              wrap
+            >
+              <v-flex
+                xs12
+                md11
+              >
+                <v-card>
+                  <p error class="error">{{ this.error }}</p>
+                </v-card>
+              </v-flex>
+            </v-layout>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
+  </template>
+<script>
+import UserService from '@/services/UserService'
+import getUrlParameter from 'get-url-parameter'
+
+export default {
+  data () {
+    return {
+      valid: true,
+      username: '',
+      usernameRules: [
+        v => !!v || 'Name is required',
+        v => (v && v.length <= 32) || 'Name must be less than 32 characters',
+        v => /^([a-zA-Z0-9-_]{2,32})$/.test(v) || 'No special character allowed'
+      ],
+      email: '',
+      emailRules: [
+        v => !!v || 'E-mail is required',
+        v => /.+@.+/.test(v) || 'E-mail must be valid'
+      ],
+      userId: null,
+      error: null
+    }
+  },
+  methods: {
+    async updateUser () {
+      try {
+        const updateStruct = {
+          username: this.username,
+          email: this.email
+        }
+        this.userId = ''
+        this.username = ''
+        this.email = ''
+        await UserService.update(updateStruct)
+        .then(res => {
+          this.getUser()
+        })
+      } catch (err) {
+        this.error = err.message
+      }
+    },
+    async deleteUser () {
+      try {
+        await VideoService.delete(videoId)
+        .then(res => {
+          this.items = []
+          this.getVideos()
+        })
+      } catch (err) {
+        this.urlLabel = err.message
+      }
+    },
+    async getUser () {
+      try {
+        await UserService.get()
+        .then(res => {
+          this.userId = res.data.result[0].userId
+          this.username = res.data.result[0].userUsername
+          this.email = res.data.result[0].userEmail
+        })
+      } catch (error) {
+        console.log('GET user failed')
+      }
+    },
+    validate () {
+      if (this.$refs.form.validate()) {
+        this.snackbar = true
+      }
+    }
+  },
+  created () {
+    this.getUser()
+  }
+}
+</script>

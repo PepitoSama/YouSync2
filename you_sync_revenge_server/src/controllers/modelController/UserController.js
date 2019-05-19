@@ -41,7 +41,8 @@ module.exports = {
       }
       const updateStruct = {
         update: {
-          userUsername: req.body.username
+          userUsername: req.body.username,
+          userEmail: req.body.email
         },
         where: {
           userId: req.user.userId

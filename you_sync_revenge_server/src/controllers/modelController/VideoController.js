@@ -1,6 +1,14 @@
 const { Video, Playlist } = require('../../../models')
 const CRUDController = require('./CRUDController')
 
+/*
+|=============================================================================
+| Video Controller
+| TODO : format URL ON create
+|      : Catch error code check to send back right HTTP code
+|=============================================================================
+*/
+
 module.exports = {
   /*
   |=============================================================================
@@ -15,7 +23,6 @@ module.exports = {
       await Playlist.belongToUser(req.body.playlistId, req.user.userId)
       const getYoutubeMetadata = require('youtube-metadata-cli')
       getYoutubeMetadata(req.body.videoUrl)
-        .on('error', console.error)
         .on('data', (meta) => {
           const createStruct = {
             videoYoutubeId: meta.id,
@@ -26,6 +33,9 @@ module.exports = {
             PlaylistPlaylistId: req.body.playlistId
           }
           CRUDController.create(req, res, Video, createStruct)
+        })
+        .catch(function (error) {
+          console.log(error)
         })
     } catch (err) {
       // 401 Unauthorized

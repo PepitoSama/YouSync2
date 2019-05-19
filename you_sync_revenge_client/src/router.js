@@ -19,7 +19,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/download'
+      redirect: '/login'
     },
     {
       path: '/register',

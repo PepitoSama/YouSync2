@@ -10,8 +10,8 @@
       <v-toolbar-title @click="goTo('playlist')">YouSync</v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-btn icon>
-        <v-icon dark @click="goTo('download')">cloud_download</v-icon>
+      <v-btn icon @click="goTo('download')">
+        <v-icon dark >cloud_download</v-icon>
       </v-btn>
 
       <div v-show="isLogged">

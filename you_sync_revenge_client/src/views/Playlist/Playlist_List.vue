@@ -53,12 +53,12 @@
                 </v-list-tile-action>
               </v-list-tile>
               <v-list-tile v-show="playing == item.id">
-                <v-list-content>
+                <v-list-tile-action>
                   <audio controls preload="none">
                     <source :src="item.audioLink">
                     Your browser does not support the audio element.
                   </audio>
-                </v-list-content>
+                </v-list-tile-action>
               </v-list-tile>
             </div>
           </v-list>
@@ -104,12 +104,8 @@
 import PlaylistService from '@/services/PlaylistService'
 import VideoService from '@/services/VideoService'
 import getUrlParameter from 'get-url-parameter'
-import Player from '@/components/Player'
 
 export default {
-  components: {
-    Player
-  },
   data () {
     return {
       nbVideo: 0,
@@ -148,6 +144,7 @@ export default {
     async createVideo () {
       if(this.videoUrl !== '') {
         try {
+          const cleanUrl = 'https://www.youtube.com/watch?v=' + getUrlParameter(this.videoUrl, 'v')
           if (this.videoUrl != '') {
             await VideoService.create(this.videoUrl, this.idPlaylist)
             .then(res => {

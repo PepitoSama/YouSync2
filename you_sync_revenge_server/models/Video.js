@@ -27,10 +27,6 @@ module.exports = (sequelize, DataTypes) => {
     videoUploaderUrl: {
       type: DataTypes.STRING,
       required: true
-    },
-    videoAudioLink: {
-      type: DataTypes.TEXT,
-      required: true
     }
   })
 

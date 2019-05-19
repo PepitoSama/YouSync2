@@ -47,6 +47,24 @@
           </v-list>
         </v-card>
       </v-card>
+
+      <div class="text-xs-center" v-show="!hidden">
+        <v-text-field
+          label="New playlist name"
+          prepend-inner-icon="add_circle"
+          v-model="playlistName"
+        ></v-text-field>
+        <v-btn
+          round
+          color="primary"
+          dark
+          @click="createPlaylist()"
+        >
+          Add
+          <v-icon right dark>add</v-icon>
+        </v-btn>
+      </div>
+
       <v-card-text class = "mt-5" style="height: 100px; position: relative">
         <v-fab-transition>
           <v-btn
@@ -56,7 +74,7 @@
             top
             right
             fab
-            @click="goTo('playlistcreation')"
+            @click="hidden = !hidden"
           >
             <v-icon>add</v-icon>
           </v-btn>
@@ -74,7 +92,9 @@ export default {
     return {
       nbPlaylist: 0,
       nbPlaylistMsg: 'You have ' + this.nbPlaylist + ' playlist',
-      items: []
+      items: [],
+      hidden: true,
+      playlistName: ''
     }
   },
   methods: {
@@ -91,7 +111,7 @@ export default {
     async deletePlaylist (playlistId) {
       try {
         await PlaylistService.delete(playlistId)
-        .then(res => {
+        .then( () => {
           this.items = []
           this.getPlaylists()
         })
@@ -100,12 +120,12 @@ export default {
         this.nbPlaylist = 0
       }
     },
-    async getPaylists () {
+    async getPlaylists () {
       try {
         await PlaylistService.get()
         .then(res => {
           this.nbPlaylist = res.data.result.length
-          if (this.nbPlaylist == 1) {
+          if (this.nbPlaylist === 1) {
             this.nbPlaylistMsg = 'You have 1 playlist'
           } else {
             this.nbPlaylistMsg = 'You have ' + this.nbPlaylist + ' playlists'
@@ -122,10 +142,24 @@ export default {
         this.nbPlaylistMsg = 'You dont have any playlist yet, create one !'
         this.nbPlaylist = 0
       }
+    },
+    async createPlaylist () {
+      if(this.name !== '') {
+        try {
+          await PlaylistService.create(this.playlistName)
+          .then( () => {
+            this.items = []
+            this.getPlaylists()
+            this.hidden = true
+          })
+        } catch (err) {
+          this.label = 'Please enter a playlist name ...'
+        }
+      }
     }
   },
   created () {
-    this.getPaylists()
+    this.getPlaylists()
   }
 }
 </script>

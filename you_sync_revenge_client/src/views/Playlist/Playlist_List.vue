@@ -16,7 +16,7 @@
 
           <v-list two-line subheader>
 
-            <v-subheader>{{ nbVideoMsg }}</v-subheader>
+            <v-subheader>{{ videoMsg }}</v-subheader>
             <div
               v-for="item in items"
               :key="item.id"
@@ -30,7 +30,7 @@
                         <v-icon
                           color="black"
                           class="play_icon"
-                          @click="playing = (playing == item.id ? -1 : item.id)"
+                          @click="item = playMusic(item)"
                         >
                           play_circle_filled
                         </v-icon>
@@ -52,13 +52,14 @@
                   </v-btn>
                 </v-list-tile-action>
               </v-list-tile>
-              <v-list-tile v-show="playing == item.id">
-                <v-list-tile-action>
-                  <audio controls preload="none">
-                    <source :src="item.audioLink">
-                    Your browser does not support the audio element.
-                  </audio>
-                </v-list-tile-action>
+              <v-list-tile v-if="playing === item.id">
+                <v-card class="elevation-12">
+                  <v-card-text>
+                    <div class="text-xs-center" v-if="audioLink !== null">
+                      <vue-audio :file="item.audioLink" autoPlay/>
+                    </div>
+                  </v-card-text>
+                </v-card>
               </v-list-tile>
             </div>
           </v-list>
@@ -104,20 +105,23 @@
 import PlaylistService from '@/services/PlaylistService'
 import VideoService from '@/services/VideoService'
 import getUrlParameter from 'get-url-parameter'
+import VueAudio from 'vue-audio';
 
 export default {
   data () {
     return {
       nbVideo: 0,
-      nbVideoMsg: '',
+      videoMsg: '',
       idPlaylist: 0,
       items: [],
       hidden: true,
       videoUrl: '',
-      play_icon_color: 'grey',
       urlLabel: 'Youtube video URL',
-      playing: -1
+      playing: null
     }
+  },
+  components: {
+    'vue-audio': VueAudio
   },
   methods: {
     goTo (name) {
@@ -133,7 +137,7 @@ export default {
     async deleteVideo (videoId) {
       try {
         await VideoService.delete(videoId)
-        .then(res => {
+        .then( () => {
           this.items = []
           this.getVideos()
         })
@@ -142,22 +146,21 @@ export default {
       }
     },
     async createVideo () {
-      if(this.videoUrl !== '') {
-        try {
-          const cleanUrl = 'https://www.youtube.com/watch?v=' + getUrlParameter(this.videoUrl, 'v')
-          if (this.videoUrl != '') {
-            await VideoService.create(this.videoUrl, this.idPlaylist)
-            .then(res => {
-              this.items = []
-              this.getVideos()
-            })
-          } else {
-            throw new Error('Not a valid url')
-          }
-
-        } catch (err) {
-          this.urlLabel = err.message
+      try {
+        await this.getVideoId()
+        this.videoUrl = 'https://www.youtube.com/watch?v=' + this.videoId
+        if (this.videoUrl != '') {
+          await VideoService.create(this.videoUrl, this.idPlaylist)
+          .then( () => {
+            this.items = []
+            this.getVideos()
+          })
+        } else {
+          throw new Error('Not a valid url')
         }
+
+      } catch (err) {
+        this.urlLabel = err.message
       }
     },
     async getVideos () {
@@ -166,21 +169,58 @@ export default {
         await PlaylistService.getVideos(this.$route.params.idPlaylist)
         .then(res => {
           this.nbVideo = res.data.result.length
-          this.nbVideoMsg = 'You have ' + this.nbVideo + ' video'
+          this.videoMsg = 'You have ' + this.nbVideo + ' video'
           for (var i = 0; i < res.data.result.length; i++){
             const item = {
               title: res.data.result[i].videoName,
               youTubeId: res.data.result[i].videoYoutubeId,
               thumbnailUrl: res.data.result[i].videoThumbnail,
               uploaderUrl: res.data.result[i].videoUploaderUrl,
-              audioLink: res.data.result[i].videoAudioLink,
+              audioLink: null,
               id: res.data.result[i].videoId
             }
             this.items.push(item)
           }
         })
       } catch (error) {
-        this.nbVideoMsg = 'You dont have any video yet, add one !'
+        this.videoMsg = 'You dont have any video yet, add one !'
+      }
+    },
+    async playMusic (item) {
+      if (this.playing === item.id) {
+        item.audioLink = null
+        this.playing = null
+      } else {
+        await this.getAudioLink(item)
+        this.playing = item.id
+      }
+      return item
+    },
+    async getAudioLink (item) {
+      try {
+        await VideoService.getAudioLink(item.youTubeId)
+        .then(res => {
+          item.audioLink = res.data.audioLink
+        })
+      } catch (err) {
+        this.videoMsg = 'Failed to get audioLink'
+      }
+    },
+    async getVideoId () {
+      if (this.videoUrl != null) {
+        const arr = this.videoUrl.split("/")
+        for(var i = 0; i< arr.length; i++) {
+          if (arr[i] === 'www.youtube.com') {
+            this.videoId = getUrlParameter(this.videoUrl, 'v')
+          } if (arr[i] === 'youtu.be') {
+            this.videoId = arr[i+1]
+          }
+        }
+        this.videoUrl = ''
+        this.videoMsg = 'Invalid Url'
+
+      } else {
+        this.videoMsg = 'You must enter an URL'
       }
     }
   },

@@ -22,20 +22,23 @@ module.exports = {
       }
       await Playlist.belongToUser(req.body.playlistId, req.user.userId)
       const getYoutubeMetadata = require('youtube-metadata-cli')
-      getYoutubeMetadata(req.body.videoUrl)
+      await getYoutubeMetadata(req.body.videoUrl)
+        .on('error', function (err) {
+          return res.status(400).send({
+            error: err.message
+          })
+        })
         .on('data', (meta) => {
+          console.log('\n FORMAT : \n', meta.requested_formats[1])
           const createStruct = {
             videoYoutubeId: meta.id,
             videoName: meta.title,
             videoThumbnail: meta.thumbnail,
             videoUploaderUrl: meta.uploader_url,
-            videoAudioLink: meta.requested_formats[1].url,
+            // videoAudioLink: meta.requested_formats[1].url,
             PlaylistPlaylistId: req.body.playlistId
           }
           CRUDController.create(req, res, Video, createStruct)
-        })
-        .catch(function (error) {
-          console.log(error)
         })
     } catch (err) {
       // 401 Unauthorized
@@ -61,6 +64,34 @@ module.exports = {
       }
       CRUDController.read(req, res, Video, readStruct)
     } catch (err) {
+      // 401 Unauthorized
+      return res.status(401).send({
+        error: err.message
+      })
+    }
+  },
+  /*
+  |=============================================================================
+  | Video Read
+  |=============================================================================
+  */
+  async getAudioLink (req, res) {
+    try {
+      const getYoutubeMetadata = require('youtube-metadata-cli')
+      await getYoutubeMetadata(req.params.videoId)
+        .on('error', function (err) {
+          return res.status(400).send({
+            error: err.message
+          })
+        })
+        .on('data', (meta) => {
+          console.log('\n', meta.requested_formats[1].url)
+          return res.status(200).send({
+            audioLink: meta.requested_formats[1].url
+          })
+        })
+    } catch (err) {
+      console.log('\n\n', err)
       // 401 Unauthorized
       return res.status(401).send({
         error: err.message

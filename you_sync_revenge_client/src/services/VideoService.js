@@ -14,5 +14,10 @@ export default {
     return Api().delete('video/' + videoId, {
       'headers': { 'Authorization': window.$cookies.get('token') }
     })
+  },
+  getAudioLink (videoId) {
+    return Api().get('video/audioLink/' + videoId, {
+      'headers': { 'Authorization': window.$cookies.get('token') }
+    })
   }
 }

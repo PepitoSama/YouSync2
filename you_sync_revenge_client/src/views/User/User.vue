@@ -73,7 +73,6 @@
   </template>
 <script>
 import UserService from '@/services/UserService'
-import getUrlParameter from 'get-url-parameter'
 
 export default {
   data () {
@@ -105,22 +104,11 @@ export default {
         this.username = ''
         this.email = ''
         await UserService.update(updateStruct)
-        .then(res => {
+        .then( () => {
           this.getUser()
         })
       } catch (err) {
         this.error = err.message
-      }
-    },
-    async deleteUser () {
-      try {
-        await VideoService.delete(videoId)
-        .then(res => {
-          this.items = []
-          this.getVideos()
-        })
-      } catch (err) {
-        this.urlLabel = err.message
       }
     },
     async getUser () {
@@ -132,7 +120,7 @@ export default {
           this.email = res.data.result[0].userEmail
         })
       } catch (error) {
-        console.log('GET user failed')
+        this.error = 'GET user failed'
       }
     },
     validate () {

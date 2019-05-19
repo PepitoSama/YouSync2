@@ -26,3 +26,7 @@ Finally you can install both serve and client modules
 ```bash
 npm install
 ```
+
+## Bug :
+Some videos will have m4a codec for audio which is not supported by all browser.
+Last firefox version worked for me.

@@ -49,7 +49,7 @@
               <v-btn
                 dark
                 color="blue-grey darken-4"
-                v-on:click="goTo('login')"
+                v-on:tap="goTo('login')"
               >
                 Back
               </v-btn>
@@ -57,7 +57,7 @@
               <v-btn
                 dark
                 color="deep-orange"
-                v-on:click="register()"
+                v-on:tap="register()"
               >
                 Register
               </v-btn>
@@ -113,7 +113,6 @@ export default {
   }),
   methods: {
     async register () {
-      console.log(this)
       if (this.password !== this.passwordConfirm) {
         return this.error = 'Password confirmation must be equal to password'
       }

@@ -70,4 +70,5 @@ module.exports = (app) => {
   app.put('/video', VideoController.update)
   app.delete('/video/:idVideo', VideoController.delete)
   app.post('/video', VideoController.create)
+  app.get('/video/audioLink/:videoId', VideoController.getAudioLink)
 }

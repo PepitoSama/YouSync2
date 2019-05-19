@@ -1,4 +1,4 @@
-<template>
+template>
   <v-content>
     <v-container fluid fill-height>
       <v-layout align-center justify-center>
@@ -42,17 +42,14 @@ export default {
         try {
           await PlaylistService.create(this.name)
           .then(res => {
-            this.goTo('playlist')
+            this.$router.push({
+              name: 'playlist'
+            })
           })
         } catch (err) {
           this.label = 'Please enter a playlist name ...'
         }
       }
-    },
-    goTo (whereToGo) {
-      this.$router.push({
-        name: whereToGo
-      })
     }
   }
 }

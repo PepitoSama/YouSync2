@@ -29,7 +29,7 @@ module.exports = {
           })
         })
         .on('data', (meta) => {
-          console.log('\n FORMAT : \n', meta.requested_formats[1])
+          console.log('\n FORMAT : \n', meta.requested_formats[1].url)
           const createStruct = {
             videoYoutubeId: meta.id,
             videoName: meta.title,

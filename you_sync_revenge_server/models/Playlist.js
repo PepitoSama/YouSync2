@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
     playlistName: {
       type: DataTypes.STRING,
       required: true
+    },
+    playlistVideoNbr: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
     }
   })
   // TODO : define idUser as required

@@ -4,14 +4,17 @@
       <v-layout align-center justify-center>
         <v-flex xs12 sm8 md8>
           <v-card class="elevation-12">
+
             <v-toolbar dark color="grey darken-2">
-              <v-toolbar-title>Download a video</v-toolbar-title>
+              <v-toolbar-title>Listen a YouTube Video</v-toolbar-title>
             </v-toolbar>
+
             <v-card-text>
               <v-form>
                 <v-text-field prepend-icon="link" name="videoUrl" :label="videoMsg" v-model="videoUrl" id="videoUrl" type="text"></v-text-field>
               </v-form>
             </v-card-text>
+
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
@@ -19,16 +22,32 @@
                 color="deep-orange"
                 v-on:click="playMusic()"
               >
-                Download
+                Listen
               </v-btn>
             </v-card-actions>
-          </v-card>
-          <v-card class="elevation-12">
-            <v-card-text>
-              <div class="text-xs-center" v-if="audioLink !== null">
-                <vue-audio :file="audioLink" autoPlay/>
-              </div>
-            </v-card-text>
+
+            <v-layout v-if="loading">
+              <v-flex xs12 sm6 offset-sm3 lg4 offset-lg4>
+                <div class="text-xs-center">
+                  <v-progress-circular
+                    indeterminate
+                    :size="70"
+                    :width="7"
+                    color="red"
+                  >
+                  </v-progress-circular>
+                </div>
+              </v-flex>
+            </v-layout>
+
+            <v-layout v-if="audioLink !== null">
+              <v-flex xs12 sm6 offset-sm3 lg4 offset-lg4>
+                <div class="text-xs-center">
+                  <vuetify-audio :file="audioLink"></vuetify-audio>
+                </div>
+              </v-flex>
+            </v-layout>
+
           </v-card>
         </v-flex>
       </v-layout>
@@ -37,9 +56,9 @@
 </template>
 
 <script>
-import VueAudio from 'vue-audio';
 import VideoService from '@/services/VideoService'
 import getUrlParameter from 'get-url-parameter'
+import VuetifyAudio from 'vuetify-audio';
 
 export default {
   data () {
@@ -47,16 +66,20 @@ export default {
       videoUrl: null,
       videoId: null,
       audioLink: null,
-      videoMsg: 'Video URL'
+      videoMsg: 'Video URL',
+      loading: false
     }
   },
   components: {
-    'vue-audio': VueAudio
+    'vuetify-audio': VuetifyAudio
   },
   methods: {
     async playMusic () {
+      this.loading = true
+      this.audioLink = null
       await this.getVideoId()
       await this.getAudioLink(this.videoId)
+      this.loading = false
     },
     async getAudioLink (videoUrl) {
       try {
@@ -66,6 +89,7 @@ export default {
         })
       } catch (err) {
         this.videoMsg = 'Failed to get audioLink'
+        this.loading = false
       }
     },
     async getVideoId () {
@@ -80,6 +104,7 @@ export default {
         }
       } else {
         this.videoMsg = 'Enter a valid Url please'
+        this.loading = false
       }
     }
   }

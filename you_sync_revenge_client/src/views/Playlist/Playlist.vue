@@ -32,7 +32,7 @@
                 >
                   {{ item.title }}
                 </v-list-tile-title>
-                <v-list-tile-sub-title>TODO videos</v-list-tile-sub-title>
+                <v-list-tile-sub-title>{{ item.count }} videos</v-list-tile-sub-title>
               </v-list-tile-content>
               <v-list-tile-action>
                 <v-btn
@@ -133,6 +133,7 @@ export default {
           for (var i = 0; i < res.data.result.length; i++){
             const item = {
               title: res.data.result[i].playlistName,
+              count: res.data.result[i].playlistVideoNbr,
               id: res.data.result[i].playlistId,
             }
             this.items.push(item)

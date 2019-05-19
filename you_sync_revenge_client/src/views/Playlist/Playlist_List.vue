@@ -15,7 +15,6 @@
 
 
           <v-list two-line subheader>
-
             <v-subheader>{{ videoMsg }}</v-subheader>
             <div
               v-for="item in items"
@@ -39,7 +38,7 @@
                   </v-img>
                 </v-list-tile-action>
                 <v-list-tile-content class="pa-3">
-                  <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                  <v-list-tile-title @click="item = playMusic(item)">{{ item.title }}</v-list-tile-title>
                 </v-list-tile-content>
 
                 <v-list-tile-action>
@@ -52,15 +51,29 @@
                   </v-btn>
                 </v-list-tile-action>
               </v-list-tile>
-              <v-list-tile v-if="playing === item.id">
-                <v-card class="elevation-12">
-                  <v-card-text>
-                    <div class="text-xs-center" v-if="audioLink !== null">
-                      <vue-audio :file="item.audioLink" autoPlay/>
+              <v-list-tile v-if="loading === item.id">
+                <v-layout>
+                  <v-flex xs12 sm6 offset-sm3 lg4 offset-lg4>
+                    <div class="text-xs-center">
+                      <v-progress-circular
+                        indeterminate
+                        :size="70"
+                        :width="7"
+                        color="red"
+                      >
+                      </v-progress-circular>
                     </div>
-                  </v-card-text>
-                </v-card>
+                  </v-flex>
+                </v-layout>
               </v-list-tile>
+              <v-layout v-if="playing === item.id">
+                <v-flex xs12 sm6 offset-sm3 lg4 offset-lg4>
+                  <div class="text-xs-center" v-if="audioLink !== null">
+                    <vuetify-audio :file="item.audioLink"></vuetify-audio>
+                    <!-- <vue-audio :file="item.audioLink" autoPlay/> -->
+                  </div>
+                </v-flex>
+              </v-layout>
             </div>
           </v-list>
         </v-card>
@@ -80,6 +93,12 @@
             Add
             <v-icon right dark>add</v-icon>
           </v-btn>
+          <v-progress-circular
+            indeterminate
+            color="red"
+            v-if="adding"
+          >
+          </v-progress-circular>
         </div>
 
         <v-card-text class = "mt-5" style="height: 100px; position: relative">
@@ -105,7 +124,7 @@
 import PlaylistService from '@/services/PlaylistService'
 import VideoService from '@/services/VideoService'
 import getUrlParameter from 'get-url-parameter'
-import VueAudio from 'vue-audio';
+import VuetifyAudio from 'vuetify-audio'
 
 export default {
   data () {
@@ -117,11 +136,13 @@ export default {
       hidden: true,
       videoUrl: '',
       urlLabel: 'Youtube video URL',
-      playing: null
+      playing: null,
+      loading: true,
+      adding: false
     }
   },
   components: {
-    'vue-audio': VueAudio
+    'vuetify-audio': VuetifyAudio
   },
   methods: {
     goTo (name) {
@@ -149,18 +170,23 @@ export default {
       try {
         await this.getVideoId()
         this.videoUrl = 'https://www.youtube.com/watch?v=' + this.videoId
-        if (this.videoUrl != '') {
+        if (this.videoUrl != '' && this.videoUrl != null) {
+          this.adding = true
           await VideoService.create(this.videoUrl, this.idPlaylist)
           .then( () => {
+            this.hidden = true
+            this.videoUrl = ''
             this.items = []
             this.getVideos()
+            this.adding = false
           })
         } else {
           throw new Error('Not a valid url')
         }
 
       } catch (err) {
-        this.urlLabel = err.message
+        this.urlLabel = 'Invalid link'
+        this.adding = false
       }
     },
     async getVideos () {
@@ -187,14 +213,16 @@ export default {
       }
     },
     async playMusic (item) {
+      this.loading = item.id
       if (this.playing === item.id) {
         item.audioLink = null
         this.playing = null
       } else {
+        this.playing = null
         await this.getAudioLink(item)
         this.playing = item.id
       }
-      return item
+      return this.loading = null
     },
     async getAudioLink (item) {
       try {
@@ -208,7 +236,7 @@ export default {
     },
     async getVideoId () {
       if (this.videoUrl != null) {
-        const arr = this.videoUrl.split("/")
+        const arr = await this.videoUrl.split("/")
         for(var i = 0; i< arr.length; i++) {
           if (arr[i] === 'www.youtube.com') {
             this.videoId = getUrlParameter(this.videoUrl, 'v')
@@ -216,9 +244,8 @@ export default {
             this.videoId = arr[i+1]
           }
         }
-        this.videoUrl = ''
+        this.videoUrl = null
         this.videoMsg = 'Invalid Url'
-
       } else {
         this.videoMsg = 'You must enter an URL'
       }

@@ -1,7 +1,9 @@
+require('dotenv').config()
+
 import Vue from 'vue'
 import './plugins/vuetify'
 import App from './App.vue'
-import router from './router'
+import router from './router/router'
 import store from './store/store'
 import VueCookies from 'vue-cookies'
 import Vuex from 'vuex'

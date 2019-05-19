@@ -49,7 +49,7 @@
               <v-btn
                 dark
                 color="blue-grey darken-4"
-                v-on:tap="goTo('login')"
+                @click="goTo('login')"
               >
                 Back
               </v-btn>
@@ -57,7 +57,7 @@
               <v-btn
                 dark
                 color="deep-orange"
-                v-on:tap="register()"
+                @click="register()"
               >
                 Register
               </v-btn>

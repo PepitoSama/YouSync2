@@ -13,7 +13,7 @@ const VideoController = require('./controllers/modelController/VideoController')
 
 module.exports = (app) => {
   app.get('/', (req, res) => {
-    res.end('hello World')
+    res.end('Hello World !')
   })
   /*
   |=============================================================================

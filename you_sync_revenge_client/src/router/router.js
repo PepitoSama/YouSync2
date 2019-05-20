@@ -18,11 +18,11 @@ function guard (to, from, next) {
 }
 
 const router = new Router({
-  base: process.env.BASE_URL,
   mode: 'history',
   routes: routes.map(route => ({
     name: route.name,
     path: route.path,
+    redirect: route.redirect,
     component: route.component,
     beforeEnter: (to, from, next) => {
       document.title = route.title

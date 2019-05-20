@@ -2,7 +2,7 @@ const routes = [
   {
     path: '/',
     name: 'root',
-    redirect: '/login',
+    redirect: '/playlist',
     title: 'Redirecting',
     isPublic: true
   },

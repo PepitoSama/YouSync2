@@ -8,8 +8,22 @@
               <v-toolbar-title>Login</v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-              <v-text-field required prepend-icon="person" name="login" label="username" v-model="username" id="username" type="text"></v-text-field>
-              <v-text-field required prepend-icon="lock" name="password" label="password" v-model="password" id="password" type="password"></v-text-field>
+              <v-text-field
+                required
+                prepend-icon="person"
+                name="login"
+                label="username"
+                v-model="username"
+                id="username"
+                type="text"></v-text-field>
+              <v-text-field
+                required
+                prepend-icon="lock"
+                name="password"
+                label="password"
+                v-model="password"
+                id="password"
+                type="password"></v-text-field>
             </v-card-text>
             <v-card-actions>
               <v-btn

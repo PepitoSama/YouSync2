@@ -7,6 +7,10 @@
 
             <v-toolbar dark color="grey darken-2">
               <v-toolbar-title>Listen a YouTube Video</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-btn icon color="grey darken-2" @click="goTo('playlist')">
+                <v-icon>cancel</v-icon>
+              </v-btn>
             </v-toolbar>
 
             <v-card-text>
@@ -106,6 +110,15 @@ export default {
       } else {
         this.videoMsg = 'Enter a valid Url please'
         this.loading = false
+      }
+    },
+    goTo: function (whereToGo) {
+      if (whereToGo == 'logout') {
+        this.logout()
+      } else {
+        this.$router.push({
+          name: whereToGo
+        })
       }
     }
   }

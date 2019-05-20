@@ -29,4 +29,4 @@ npm install
 
 ## Bug :
 Some videos will have m4a codec for audio which is not supported by all browser.
-Last firefox version worked for me.
+Last firefox version will work for most of youtube music.

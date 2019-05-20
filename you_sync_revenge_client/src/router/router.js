@@ -7,7 +7,7 @@ Vue.use(Router)
 
 function guard (to, from, next) {
   const auth = store.getters.isLogged
-
+  
   if (!auth) {
     next({
       path: '/login'

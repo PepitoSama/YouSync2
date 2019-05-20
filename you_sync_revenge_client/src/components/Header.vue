@@ -20,6 +20,7 @@
           icon
           @click="goTo(item.goTo)"
           v-for="item in itemsConnected"
+          :key="item.title"
           :title="item.title"
           :alt="item.title"
         >
@@ -32,6 +33,7 @@
           icon
           @click="goTo(item.goTo)"
           v-for="item in itemsDisconnected"
+          :key="item.title"
           :title="item.title"
           :alt="item.title"
         >
@@ -111,7 +113,7 @@ export default {
       drawer: false,
       itemsConnected: [
         {
-          title: 'Download',
+          title: 'Listen',
           icon: 'cloud_download',
           goTo: 'download',
         },

@@ -8,7 +8,7 @@
 
           <v-spacer></v-spacer>
 
-          <v-btn icon disabled>
+          <v-btn icon title="Soon !">
             <v-icon>search</v-icon>
           </v-btn>
         </v-toolbar>
@@ -63,7 +63,7 @@
         </v-btn>
       </div>
 
-      <v-card-text class = "mt-5" style="height: 100px; position: relative">
+      <v-card-text class="mt-5" style="height: 100px; position: relative">
         <v-fab-transition>
           <v-btn
             color="pink"

@@ -50,7 +50,7 @@ export default {
         title: "GitHub",
         icon: "code",
         path: "",
-        href: "https://www.polytech.umontpellier.fr/",
+        href: "https://github.com/PepitoSama",
         target: "_blank"
       },
       {

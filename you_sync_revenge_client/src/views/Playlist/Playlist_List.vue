@@ -8,7 +8,7 @@
 
           <v-spacer></v-spacer>
 
-          <v-btn icon disabled>
+          <v-btn icon title="Soon !">
             <v-icon>search</v-icon>
           </v-btn>
         </v-toolbar>
@@ -213,7 +213,11 @@ export default {
           }
         })
       } catch (error) {
-        this.videoMsg = 'You dont have any video yet, add one !'
+        if (error.response.status === 401) {
+          this.videoMsg = '401 Unauthorized : This is not your playlist ಠ_ಠ'
+        } else {
+          this.videoMsg = 'You dont have any video yet, add one !'
+        }
       }
     },
     async playMusic (item) {

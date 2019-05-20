@@ -1,35 +1,29 @@
-  <template>
-    <v-container
-      fill-height
-      fluid
-      grid-list-xl>
-      <v-layout
-        justify-center
-        wrap
+<template>
+  <v-layout row>
+
+    <v-flex xs12 sm6 offset-sm3 >
+      <v-card
+        color="grey lighten-4"
+        flat
+        height="200px"
+        tile
       >
-        <v-flex
-          xs12
-          md8
+        <v-toolbar
+          dense
+          color="grey darken-2"
+          dark
         >
-          <v-card
-            color="grey lighten-4"
-            flat
-            height="200px"
-            tile
+          <v-icon>person</v-icon>
+          <v-toolbar-title>Your Infos</v-toolbar-title>
+        </v-toolbar>
+        <v-list subheader>
+          <v-subheader>Edit your informations :</v-subheader>
+          <v-form
+            ref="form"
+            v-model="valid"
+            lazy-validation
           >
-            <v-toolbar
-              dense
-              color="grey darken-2"
-              dark
-            >
-              <v-icon>person</v-icon>
-              <v-toolbar-title>Your Infos</v-toolbar-title>
-            </v-toolbar>
-            <v-form
-              ref="form"
-              v-model="valid"
-              lazy-validation
-            >
+            <v-list-tile>
               <v-text-field
                 v-model="username"
                 :counter="32"
@@ -37,37 +31,17 @@
                 label="Name"
                 required
               ></v-text-field>
+            </v-list-tile>
 
+            <v-list-tile>
               <v-text-field
                 v-model="email"
                 :rules="emailRules"
                 label="E-mail"
                 required
               ></v-text-field>
-              <v-layout
-                justify-center
-                wrap
-              >
-                <v-flex
-                  xs12
-                  md11
-                >
-                  <div class="text-xs-center">
-                    <v-btn
-                      round
-                      color="success"
-                      dark
-                      :disabled="!valid"
-                      @click="updateUser"
-                    >
-                      <v-icon>edit</v-icon>
-                      Edit
-                    </v-btn>
-                  </div>
-                </v-flex>
-              </v-layout>
+            </v-list-tile>
 
-            </v-form>
             <v-layout
               justify-center
               wrap
@@ -76,16 +50,46 @@
                 xs12
                 md11
               >
-                <v-card>
-                  <p error class="error">{{ this.error }}</p>
-                </v-card>
+                <div class="text-xs-center">
+                  <v-btn
+                    round
+                    color="success"
+                    dark
+                    :disabled="!valid"
+                    @click="updateUser"
+                  >
+                    <v-icon>edit</v-icon>
+                    Edit
+                  </v-btn>
+                </div>
               </v-flex>
             </v-layout>
-          </v-card>
-        </v-flex>
-      </v-layout>
-    </v-container>
-  </template>z
+
+          </v-form>
+        </v-list>
+        <v-layout
+          justify-center
+          wrap
+        >
+          <v-flex
+            xs12
+            md11
+          >
+            <v-card>
+              <v-card-text
+                class="mt-5 error"
+                v-if="error != null"
+                >
+                  {{ this.error }}
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-card>
+    </v-flex>
+  </v-layout>
+</template>
+
 <script>
 import UserService from '@/services/UserService'
 

@@ -12,6 +12,8 @@
       <v-btn
         v-for="link in links"
         :key="link.title"
+        :href="link.href"
+        :target="link.target"
         color="white"
         flat
         round
@@ -20,6 +22,7 @@
         <v-icon dark>{{ link.icon }}</v-icon>
         {{ link.title }}
       </v-btn>
+
       <v-flex
         primary
         text-xs-center
@@ -37,9 +40,25 @@ export default {
   data: () => ({
     links: [
       {
-        title: "credit",
+        title: "Credit",
         icon: "info",
-        path: "credit"
+        path: "credit",
+        href: "",
+        target: ""
+      },
+      {
+        title: "GitHub",
+        icon: "code",
+        path: "",
+        href: "https://www.polytech.umontpellier.fr/",
+        target: "_blank"
+      },
+      {
+        title: "Polytech",
+        icon: "business_center",
+        path: "",
+        href: "https://www.polytech.umontpellier.fr/",
+        target: "_blank"
       }
     ]
   }),

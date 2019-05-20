@@ -73,6 +73,15 @@
       </v-list-tile>
     </v-list>
     <v-list v-else>
+      <v-list-tile @click="drawer = false">
+        <v-list-tile-action>
+          <v-icon>arrow_back_ios</v-icon>
+        </v-list-tile-action>
+
+        <v-list-tile-content>
+          <v-list-tile-title>Close</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
       <v-list-tile
         v-for="item in itemsDisconnected"
         :key="item.title"

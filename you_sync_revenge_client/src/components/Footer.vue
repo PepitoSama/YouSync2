@@ -11,12 +11,13 @@
     >
       <v-btn
         v-for="link in links"
-        :key="link"
+        :key="link.title"
         color="white"
         flat
         round
         @click=goTo(link.path)
       >
+        <v-icon dark>{{ link.icon }}</v-icon>
         {{ link.title }}
       </v-btn>
       <v-flex
@@ -25,7 +26,7 @@
         white--text
         xs12
       >
-        &copy;2018 — <strong>Made with Vuetify</strong>
+        Web project 2019 — <strong>Made with Vuetify</strong>
       </v-flex>
     </v-layout>
   </v-footer>
@@ -37,6 +38,7 @@ export default {
     links: [
       {
         title: "credit",
+        icon: "info",
         path: "credit"
       }
     ]

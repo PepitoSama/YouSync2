@@ -17,7 +17,11 @@
             height="200px"
             tile
           >
-            <v-toolbar dense>
+            <v-toolbar
+              dense
+              color="grey darken-2"
+              dark
+            >
               <v-icon>person</v-icon>
               <v-toolbar-title>Your Infos</v-toolbar-title>
             </v-toolbar>
@@ -29,7 +33,7 @@
               <v-text-field
                 v-model="username"
                 :counter="32"
-                :rules="nameRules"
+                :rules="usernameRules"
                 label="Name"
                 required
               ></v-text-field>
@@ -40,18 +44,29 @@
                 label="E-mail"
                 required
               ></v-text-field>
-              <div class="text-xs-center">
-                <v-btn
-                  round
-                  color="success"
-                  dark
-                  :disabled="!valid"
-                  @click="updateUser"
+              <v-layout
+                justify-center
+                wrap
+              >
+                <v-flex
+                  xs12
+                  md11
                 >
-                  <v-icon>edit</v-icon>
-                  Edit
-                </v-btn>
-              </div>
+                  <div class="text-xs-center">
+                    <v-btn
+                      round
+                      color="success"
+                      dark
+                      :disabled="!valid"
+                      @click="updateUser"
+                    >
+                      <v-icon>edit</v-icon>
+                      Edit
+                    </v-btn>
+                  </div>
+                </v-flex>
+              </v-layout>
+
             </v-form>
             <v-layout
               justify-center
@@ -70,7 +85,7 @@
         </v-flex>
       </v-layout>
     </v-container>
-  </template>
+  </template>z
 <script>
 import UserService from '@/services/UserService'
 

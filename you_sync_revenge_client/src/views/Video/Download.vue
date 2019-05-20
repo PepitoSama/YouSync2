@@ -11,7 +11,7 @@
 
             <v-card-text>
               <v-form>
-                <v-text-field prepend-icon="link" name="videoUrl" :label="videoMsg" v-model="videoUrl" id="videoUrl" type="text"></v-text-field>
+                <v-text-field prepend-icon="link" name="videoUrl" :label="videoMsg" v-model="videoUrl" id="videoUrl" type="text" alt="Video Url"></v-text-field>
               </v-form>
             </v-card-text>
 
@@ -21,6 +21,7 @@
                 dark
                 color="deep-orange"
                 v-on:click="playMusic()"
+                alt="Listen to the link you filled"
               >
                 Listen
               </v-btn>

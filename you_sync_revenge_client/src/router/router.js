@@ -19,6 +19,7 @@ function guard (to, from, next) {
 
 const router = new Router({
   mode: 'history',
+  base: 'YouSync',
   routes: routes.map(route => ({
     name: route.name,
     path: route.path,

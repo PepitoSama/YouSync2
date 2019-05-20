@@ -7,37 +7,135 @@
   >
     <v-toolbar dense color="red darken-4" dark fixed>
 
+      <v-toolbar-side-icon
+        @click="drawer = !drawer"
+      ></v-toolbar-side-icon>
+
       <v-toolbar-title @click="goTo('playlist')">YouSync</v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-btn icon @click="goTo('download')">
-        <v-icon dark >cloud_download</v-icon>
-      </v-btn>
 
-      <div v-show="isLogged">
-        <v-btn icon>
-          <v-icon dark @click="goTo('playlist')">playlist_play</v-icon>
-        </v-btn>
-        <v-btn icon>
-          <v-icon dark @click="goTo('user')">account_circle</v-icon>
-        </v-btn>
-        <v-btn icon>
-          <v-icon dark @click="logout()">cancel</v-icon>
+      <div v-if="isLogged" class="hidden-sm-and-down">
+        <v-btn
+          icon
+          @click="goTo(item.goTo)"
+          v-for="item in itemsConnected"
+          :title="item.title"
+          :alt="item.title"
+        >
+          <v-icon dark >{{ item.icon }}</v-icon>
         </v-btn>
       </div>
 
-      <div v-show="!isLogged">
-        <v-btn icon>
-          <v-icon dark @click="goTo('login')">account_circle</v-icon>
+      <div v-else>
+        <v-btn
+          icon
+          @click="goTo(item.goTo)"
+          v-for="item in itemsDisconnected"
+          :title="item.title"
+          :alt="item.title"
+        >
+          <v-icon dark >{{ item.icon }}</v-icon>
         </v-btn>
       </div>
     </v-toolbar>
+
+    <v-navigation-drawer
+      class="red darken-4"
+      dark
+      v-model="drawer"
+      app
+    >
+    <v-list v-if="isLogged">
+      <v-list-tile @click="drawer = false">
+        <v-list-tile-action>
+          <v-icon>arrow_back_ios</v-icon>
+        </v-list-tile-action>
+
+        <v-list-tile-content>
+          <v-list-tile-title>Close</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+
+      <v-list-tile
+        v-for="item in itemsConnected"
+        :key="item.title"
+        @click="goTo(item.goTo)"
+        :alt="item.title"
+      >
+        <v-list-tile-action>
+          <v-icon>{{ item.icon }}</v-icon>
+        </v-list-tile-action>
+
+        <v-list-tile-content>
+          <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+    </v-list>
+    <v-list v-else>
+      <v-list-tile
+        v-for="item in itemsDisconnected"
+        :key="item.title"
+        @click="goTo(item.goTo)"
+        :alt="item.title"
+      >
+        <v-list-tile-action>
+          <v-icon>{{ item.icon }}</v-icon>
+        </v-list-tile-action>
+
+        <v-list-tile-content>
+          <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+    </v-list>
+
+  </v-navigation-drawer>
+
   </v-card>
 </template>
 
 <script>
 import AuthentificationService from '@/services/AuthenticationService'
 export default {
+  data() {
+    return {
+      drawer: false,
+      itemsConnected: [
+        {
+          title: 'Download',
+          icon: 'cloud_download',
+          goTo: 'download',
+        },
+        {
+          title: 'Playlists',
+          goTo: 'playlist',
+          icon: 'playlist_play',
+        },
+        {
+          title: 'Account',
+          goTo: 'user',
+          icon: 'account_circle',
+        },
+        {
+          title: 'Logout',
+          goTo: 'logout',
+          icon: 'cancel',
+        }
+      ],
+      itemsDisconnected: [
+        {
+          title: 'Download',
+          goTo: 'download',
+          icon: 'cloud_download',
+        },
+        {
+          title: 'Login',
+          goTo: 'login',
+          icon: 'account_circle',
+        }
+      ]
+    }
+  },
   computed : {
     isLogged : function(){
       return this.$store.getters.isLogged
@@ -59,9 +157,13 @@ export default {
       }
     },
     goTo: function (whereToGo) {
-      this.$router.push({
-        name: whereToGo
-      })
+      if (whereToGo == 'logout') {
+        this.logout()
+      } else {
+        this.$router.push({
+          name: whereToGo
+        })
+      }
     }
   }
 }

@@ -2,120 +2,124 @@
   <v-layout row>
     <v-flex xs12 sm6 offset-sm3>
       <v-card>
-          <v-toolbar color="grey darken-2" dark>
+        <v-toolbar color="grey darken-2" dark>
 
-            <v-toolbar-title>Playlists #{{ idPlaylist }}</v-toolbar-title>
+          <v-toolbar-title>Playlists #{{ idPlaylist }}</v-toolbar-title>
 
-            <v-spacer></v-spacer>
+          <v-spacer></v-spacer>
 
-            <v-btn icon disabled>
-              <v-icon>search</v-icon>
-            </v-btn>
-          </v-toolbar>
+          <v-btn icon disabled>
+            <v-icon>search</v-icon>
+          </v-btn>
+        </v-toolbar>
 
-
-          <v-list two-line subheader>
-            <v-subheader>{{ videoMsg }}</v-subheader>
-            <div
-              v-for="item in items"
-              :key="item.id"
+        <v-list two-line subheader>
+          <v-subheader>{{ videoMsg }}</v-subheader>
+          <div
+            v-for="item in items"
+            :key="item.id"
+          >
+            <v-list-tile
             >
-              <v-list-tile
-              >
-                <v-list-tile-action>
-                  <v-img :src="item.thumbnailUrl">
-                    <v-layout pa-3 column fill-height>
-                      <v-flex shrink>
-                        <v-icon
-                          color="black"
-                          class="play_icon"
-                          @click="item = playMusic(item)"
-                        >
-                          play_circle_filled
-                        </v-icon>
-                      </v-flex>
-                    </v-layout>
-                  </v-img>
-                </v-list-tile-action>
-                <v-list-tile-content class="pa-3">
-                  <v-list-tile-title @click="item = playMusic(item)">{{ item.title }}</v-list-tile-title>
-                </v-list-tile-content>
-
-                <v-list-tile-action>
-                  <v-btn
-                    icon
-                    ripple
-                    @click="deleteVideo(item.id)"
-                  >
-                    <v-icon color="red">remove_circle</v-icon>
-                  </v-btn>
-                </v-list-tile-action>
-              </v-list-tile>
-              <v-list-tile v-if="loading === item.id">
-                <v-layout>
-                  <v-flex xs12 sm6 offset-sm3 lg4 offset-lg4>
-                    <div class="text-xs-center">
-                      <v-progress-circular
-                        indeterminate
-                        :size="70"
-                        :width="7"
-                        color="red"
+              <v-list-tile-action>
+                <v-img :src="item.thumbnailUrl">
+                  <v-layout pa-3 column fill-height>
+                    <v-flex shrink>
+                      <v-icon
+                        color="black"
+                        class="clickable"
+                        @click="item = playMusic(item)"
+                        title="Play"
+                        alt="Play this music"
                       >
-                      </v-progress-circular>
-                    </div>
-                  </v-flex>
-                </v-layout>
-              </v-list-tile>
-              <v-layout v-if="playing === item.id">
+                        play_circle_filled
+                      </v-icon>
+                    </v-flex>
+                  </v-layout>
+                </v-img>
+              </v-list-tile-action>
+              <v-list-tile-content class="pa-3 clickable">
+                <v-list-tile-title @click="item = playMusic(item)">
+                  {{ item.title }}
+                </v-list-tile-title>
+              </v-list-tile-content>
+
+              <v-list-tile-action>
+                <v-btn
+                  icon
+                  ripple
+                  @click="deleteVideo(item.id)"
+                  title="Remove"
+                  alt="Remove this video from you playlist"
+                >
+                  <v-icon color="red">remove_circle</v-icon>
+                </v-btn>
+              </v-list-tile-action>
+            </v-list-tile>
+            <v-list-tile v-if="loading === item.id">
+              <v-layout>
                 <v-flex xs12 sm6 offset-sm3 lg4 offset-lg4>
-                  <div class="text-xs-center" v-if="audioLink !== null">
-                    <vuetify-audio :file="item.audioLink"></vuetify-audio>
-                    <!-- <vue-audio :file="item.audioLink" autoPlay/> -->
+                  <div class="text-xs-center">
+                    <v-progress-circular
+                      indeterminate
+                      :size="70"
+                      :width="7"
+                      color="red"
+                    >
+                    </v-progress-circular>
                   </div>
                 </v-flex>
               </v-layout>
-            </div>
-          </v-list>
-        </v-card>
+            </v-list-tile>
+            <v-layout v-if="playing === item.id">
+              <v-flex xs12 sm6 offset-sm3 lg4 offset-lg4>
+                <div class="text-xs-center" v-if="audioLink !== null">
+                  <vuetify-audio :file="item.audioLink"></vuetify-audio>
+                </div>
+              </v-flex>
+            </v-layout>
+          </div>
+        </v-list>
+      </v-card>
 
-        <div class="text-xs-center" v-show="!hidden">
-          <v-text-field
-            :label="urlLabel"
-            prepend-inner-icon="add_circle"
-            v-model="videoUrl"
-          ></v-text-field>
+      <div class="text-xs-center" v-show="!hidden">
+        <v-text-field
+          :label="urlLabel"
+          prepend-inner-icon="add_circle"
+          v-model="videoUrl"
+        ></v-text-field>
+        <v-btn
+          round
+          color="primary"
+          dark
+          @click="createVideo"
+        >
+          Add
+          <v-icon right dark>add</v-icon>
+        </v-btn>
+        <v-progress-circular
+          indeterminate
+          color="red"
+          v-if="adding"
+        >
+        </v-progress-circular>
+      </div>
+
+      <v-card-text class = "mt-5" style="height: 100px; position: relative">
+        <v-fab-transition>
           <v-btn
-            round
-            color="primary"
+            color="pink"
             dark
-            @click="createVideo"
+            absolute
+            top
+            right
+            fab
+            @click="hidden = !hidden"
           >
-            Add
-            <v-icon right dark>add</v-icon>
+            <v-icon>add</v-icon>
           </v-btn>
-          <v-progress-circular
-            indeterminate
-            color="red"
-            v-if="adding"
-          >
-          </v-progress-circular>
-        </div>
-
-        <v-card-text class = "mt-5" style="height: 100px; position: relative">
-          <v-fab-transition>
-            <v-btn
-              color="pink"
-              dark
-              absolute
-              top
-              right
-              fab
-              @click="hidden = !hidden"
-            >
-              <v-icon>add</v-icon>
-            </v-btn>
-          </v-fab-transition>
-        </v-card-text>
+        </v-fab-transition>
+      </v-card-text>
     </v-flex>
   </v-layout>
 </template>
@@ -258,11 +262,7 @@ export default {
 </script>
 
 <style>
-.play_icon {
+.clickable {
   cursor: pointer;
-}
-
-.play_icon:hover {
-  color: red;
 }
 </style>
